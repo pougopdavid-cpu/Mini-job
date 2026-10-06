@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpportunityCMR - Micro-Opportunités & Formations Pratiques au Cameroun</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cmGreen: '#007A3D',
+                        cmRed: '#CE1126',
+                        cmYellow: '#FCD116',
+                        cmEmerald: '#064E3B',
+                        cmGold: '#D97706',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur shadow-sm border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cmGreen via-cmRed to-cmYellow p-0.5 shadow-md">
+                        <div class="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-rocket text-cmGreen text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-slate-900">Opportunity<span class="text-cmGreen">CMR</span></span>
+                        <span class="block text-[10px] text-slate-500 font-medium -mt-1">Le Hub des Jeunes Entrepreneurs</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-8">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" onkeyup="filterContent()" placeholder="Rechercher une opportunité, e-book ou ville..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 border border-transparent rounded-full focus:bg-white focus:border-cmGreen focus:outline-none transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleModal('modalPublish')" class="hidden sm:inline-flex items-center space-x-2 bg-cmGreen hover:bg-emerald-800 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-full shadow-sm hover:shadow transition">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <span>Publier</span>
+                    </button>
+                    <button onclick="openSavedModal()" class="relative p-2.5 text-slate-600 hover:text-slate-900 rounded-full hover:bg-slate-100 transition" title="Favoris">
+                        <i class="fa-solid fa-heart text-lg"></i>
+                        <span id="favCountBadge" class="hidden absolute -top-1 -right-1 bg-cmRed text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                    </button>
+                    <!-- Mobile Search toggle -->
+                    <button onclick="toggleMobileSearch()" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-full">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Search Bar input -->
+            <div id="mobileSearchBox" class="hidden pb-3 md:hidden">
+                <div class="relative w-full">
+                    <input type="text" id="mobileSearchInput" onkeyup="syncMobileSearch()" placeholder="Rechercher..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 border rounded-full focus:outline-none focus:border-cmGreen">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white py-12 md:py-16 overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#FCD116_1px,transparent_1px)] [background-size:16px_16px]"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="max-w-3xl">
+                    <div class="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-cmYellow border border-white/10 mb-4">
+                        <span class="w-2 h-2 rounded-full bg-cmYellow animate-pulse"></span>
+                        <span>Plateforme N°1 d'opportunités locales au Cameroun</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                        Lancez votre projet, <br class="hidden sm:inline"/>boostez vos revenus au <span class="bg-gradient-to-r from-cmGreen via-cmYellow to-cmRed bg-clip-text text-transparent">Cameroun</span>.
+                    </h1>
+                    <p class="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl">
+                        Explorez des micro-jobs, formations pratiques, appels à projets et guides téléchargeables adaptés aux réalités de Douala, Yaoundé, Bafoussam, Garoua et partout ailleurs.
+                    </p>
+                    
+                    <!-- Quick Stats Banner -->
+                    <div class="mt-8 grid grid-cols-3 gap-2 sm:gap-4 max-w-lg border-t border-white/10 pt-6">
+                        <div>
+                            <p class="text-xl sm:text-2xl font-bold text-cmYellow">150+</p>
+                            <p class="text-xs text-slate-400">Opportunités actives</p>
+                        </div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-bold text-emerald-400">25+</p>
+                            <p class="text-xs text-slate-400">Guides pratiques</p>
+                        </div>
+                        <div>
+                            <p class="text-xl sm:text-2xl font-bold text-red-400">100%</p>
+                            <p class="text-xs text-slate-400">Accès Mobile Money</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls & Filter Bar -->
+        <section class="bg-white border-b border-slate-200 sticky top-16 z-30 shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    
+                    <!-- Navigation Tabs -->
+                    <div class="flex items-center space-x-1 overflow-x-auto pb-1 md:pb-0 custom-scrollbar">
+                        <button onclick="setActiveTab('all')" id="tab-all" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-900 text-white shadow-xs">
+                            <i class="fa-solid fa-border-all mr-1.5"></i> Tout voir
+                        </button>
+                        <button onclick="setActiveTab('job')" id="tab-job" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            <i class="fa-solid fa-briefcase mr-1.5 text-blue-600"></i> Mini-Jobs & Freelance
+                        </button>
+                        <button onclick="setActiveTab('guide')" id="tab-guide" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            <i class="fa-solid fa-book-open mr-1.5 text-cmGreen"></i> Guides & E-books
+                        </button>
+                        <button onclick="setActiveTab('training')" id="tab-training" class="tab-btn px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            <i class="fa-solid fa-graduation-cap mr-1.5 text-cmGold"></i> Formations
+                        </button>
+                    </div>
+
+                    <!-- City Selector Filter -->
+                    <div class="flex items-center space-x-2 shrink-0 self-end md:self-auto">
+                        <span class="text-xs font-medium text-slate-500"><i class="fa-solid fa-location-dot text-cmRed mr-1"></i> Ville :</span>
+                        <select id="cityFilter" onchange="filterContent()" class="text-xs bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 font-medium text-slate-700 focus:outline-none focus:border-cmGreen">
+                            <option value="">Toutes les villes</option>
+                            <option value="Douala">Douala</option>
+                            <option value="Yaoundé">Yaoundé</option>
+                            <option value="Bafoussam">Bafoussam</option>
+                            <option value="Garoua">Garoua</option>
+                            <option value="Bamenda">Bamenda</option>
+                            <option value="En ligne">En ligne (A distance)</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Area -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div id="contentGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically Populated by JS -->
+            </div>
+
+            <!-- Empty State Message -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-base font-semibold text-slate-800">Aucun résultat trouvé</h3>
+                <p class="text-xs text-slate-500 mt-1">Essayez de modifier vos critères de recherche ou la ville sélectionnée.</p>
+                <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-medium text-cmGreen bg-emerald-50 rounded-lg hover:bg-emerald-100">Réinitialiser les filtres</button>
+            </div>
+        </section>
+
+        <!-- Interactive Budget Simulator Section -->
+        <section id="simulator" class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white py-12 my-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="lg:flex lg:items-center lg:justify-between gap-8">
+                    <div class="lg:w-1/2 mb-8 lg:mb-0">
+                        <div class="inline-flex items-center space-x-2 bg-emerald-800/60 px-3 py-1 rounded-full text-xs font-medium text-cmYellow border border-emerald-700/50 mb-3">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Outil d'estimation express</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Simulateur de Budget de Micro-Projet</h2>
+                        <p class="text-slate-300 text-sm mt-2">
+                            Calculez approximativement le capital de départ nécessaire pour lancer une micro-activité rentable au Cameroun.
+                        </p>
+
+                        <!-- Project Selector -->
+                        <div class="mt-6 space-y-4">
+                            <label class="block text-xs font-semibold text-slate-300">Choisissez une activité à lancer :</label>
+                            <select id="projectPreset" onchange="calculateBudget()" class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl p-3 text-sm focus:outline-none focus:border-cmGreen">
+                                <option value="poulailler">Élevage de 100 poulets de chair</option>
+                                <option value="ecommerce">Boutique E-commerce / Vente WhatsApp</option>
+                                <option value="fastfood">Fast-food / Stand de grillades local</option>
+                                <option value="pressin">Micro-pressing & Nettoyage à domicile</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Calculation Result Box -->
+                    <div class="lg:w-1/2 bg-white text-slate-800 rounded-2xl p-6 shadow-xl">
+                        <h3 id="simTitle" class="text-lg font-bold text-slate-900 flex items-center justify-between">
+                            <span>Détails du projet</span>
+                            <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">Devise: FCFA</span>
+                        </h3>
+                        
+                        <div id="simBreakdown" class="mt-4 space-y-3 text-xs sm:text-sm border-t border-b border-slate-100 py-4">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <div class="mt-4 flex items-center justify-between">
+                            <div>
+                                <span class="block text-xs text-slate-500 font-medium">Budget Total Estimé</span>
+                                <span id="simTotal" class="text-2xl font-black text-cmGreen">0 FCFA</span>
+                            </div>
+                            <button onclick="toggleModal('modalPublish')" class="text-xs bg-cmGreen hover:bg-emerald-800 text-white font-semibold px-4 py-2.5 rounded-xl shadow transition">
+                                Financer / Lancer <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <span class="text-lg font-bold text-white tracking-tight">Opportunity<span class="text-cmGreen">CMR</span></span>
+                    <p class="mt-2 text-slate-400 leading-relaxed">
+                        Accélérateur d'opportunités, de micro-jobs et de guides pratiques pour booster l'autonomie financière au Cameroun.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white mb-3">Villes couvertes</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" onclick="filterByCity('Douala')" class="hover:text-white transition">Douala (Littoral)</a></li>
+                        <li><a href="#" onclick="filterByCity('Yaoundé')" class="hover:text-white transition">Yaoundé (Centre)</a></li>
+                        <li><a href="#" onclick="filterByCity('Bafoussam')" class="hover:text-white transition">Bafoussam (Ouest)</a></li>
+                        <li><a href="#" onclick="filterByCity('Garoua')" class="hover:text-white transition">Garoua (Nord)</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white mb-3">Moyens de paiement acceptés</h4>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-amber-400/10 text-amber-400 font-bold rounded border border-amber-400/20">MTN MoMo</span>
+                        <span class="px-2 py-1 bg-orange-500/10 text-orange-400 font-bold rounded border border-orange-500/20">Orange Money</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white mb-3">Contact & Support</h4>
+                    <p class="mb-2"><i class="fa-brands fa-whatsapp text-emerald-400 mr-2"></i> +237 600 00 00 00</p>
+                    <p><i class="fa-regular fa-envelope text-slate-400 mr-2"></i> support@opportunity.cm</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-slate-500">
+                <p>&copy; 2026 OpportunityCMR. Conçu pour le développement entrepreneurial au Cameroun.</p>
+                <div class="flex space-x-4 mt-3 sm:mt-0">
+                    <span class="text-emerald-500 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> Transactions Sécurisées</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal: Payment / Mobile Money Simulation -->
+    <div id="modalPay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="toggleModal('modalPay')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="text-center">
+                <div class="w-12 h-12 bg-emerald-100 text-cmGreen rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+                <h3 id="payTitle" class="text-lg font-bold text-slate-900">Télécharger le Guide</h3>
+                <p id="payPrice" class="text-xl font-black text-cmGreen mt-1">2 500 FCFA</p>
+                <p class="text-xs text-slate-500 mt-1">Sélectionnez votre mode de paiement Mobile Money au Cameroun.</p>
+            </div>
+
+            <!-- Payment Provider Switcher -->
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <label class="cursor-pointer">
+                    <input type="radio" name="payProvider" value="momo" class="peer hidden" checked>
+                    <div class="p-3 border-2 border-slate-200 rounded-xl text-center peer-checked:border-yellow-400 peer-checked:bg-yellow-50/50 transition">
+                        <span class="font-bold text-slate-800 text-xs block">MTN MoMo</span>
+                        <span class="text-[10px] text-slate-500">*126#</span>
+                    </div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="payProvider" value="om" class="peer hidden">
+                    <div class="p-3 border-2 border-slate-200 rounded-xl text-center peer-checked:border-orange-500 peer-checked:bg-orange-50/50 transition">
+                        <span class="font-bold text-slate-800 text-xs block">Orange Money</span>
+                        <span class="text-[10px] text-slate-500">#150*50#</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Mobile Phone Input Form -->
+            <form id="momoForm" onsubmit="processPayment(event)" class="mt-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Numéro Téléphone Cameroun (+237)</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-xs text-slate-400 font-medium">+237</span>
+                        <input type="tel" required pattern="6[0-9]{8}" placeholder="6XXXXXXXX" class="w-full pl-14 pr-3 py-2 text-sm bg-slate-50 border rounded-xl focus:outline-none focus:border-cmGreen">
+                    </div>
+                </div>
+
+                <div id="momoStatus" class="hidden text-center py-2 text-xs font-semibold rounded-lg"></div>
+
+                <button type="submit" id="paySubmitBtn" class="w-full bg-cmGreen hover:bg-emerald-800 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                    Valider le Paiement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Publish Opportunity/Guide -->
+    <div id="modalPublish" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="toggleModal('modalPublish')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <h3 class="text-lg font-bold text-slate-900 mb-1">Publier sur OpportunityCMR</h3>
+            <p class="text-xs text-slate-500 mb-4">Proposez un mini-job, un guide pratique ou une session de formation.</p>
+
+            <form onsubmit="handlePublish(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Type de publication</label>
+                    <select id="pubType" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen">
+                        <option value="job">Mini-Job / Offre Freelance</option>
+                        <option value="guide">Guide ou E-book Pratique</option>
+                        <option value="training">Formation ou Atelier</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Titre de l'annonce</label>
+                    <input type="text" required id="pubTitle" placeholder="Ex: Recherche Gestionnaire WhatsApp Douala" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Ville</label>
+                        <select id="pubCity" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen">
+                            <option value="Douala">Douala</option>
+                            <option value="Yaoundé">Yaoundé</option>
+                            <option value="Bafoussam">Bafoussam</option>
+                            <option value="Garoua">Garoua</option>
+                            <option value="En ligne">En ligne</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Prix / Rémunération (FCFA)</label>
+                        <input type="text" required id="pubPrice" placeholder="Ex: 15 000 FCFA ou Gratuit" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Description détaillée</label>
+                    <textarea id="pubDesc" rows="3" required placeholder="Décrivez clairement la mission ou le contenu de la formation..." class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Contact WhatsApp ou Téléphone</label>
+                    <input type="tel" required id="pubContact" placeholder="6XXXXXXXX" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:outline-none focus:border-cmGreen">
+                </div>
+
+                <button type="submit" class="w-full bg-cmGreen hover:bg-emerald-800 text-white font-bold py-3 rounded-xl shadow transition text-xs uppercase tracking-wider">
+                    Soumettre la Publication
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Saved Items (Favorites) -->
+    <div id="modalSaved" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[80vh] flex flex-col">
+            <button onclick="toggleModal('modalSaved')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-900 mb-3"><i class="fa-solid fa-heart text-cmRed mr-2"></i>Mes Opportunités Sauvegardées</h3>
+            
+            <div id="savedList" class="flex-grow overflow-y-auto custom-scrollbar space-y-3 my-2">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-2 text-xs">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMsg">Action réussie !</span>
+    </div>
+
+    <script>
+        // Initial Dataset targeting Cameroon Context
+        const initialItems = [
+            {
+                id: 1,
+                type: 'job',
+                title: 'Gestionnaire de Boutique WhatsApp & Service Client',
+                city: 'Douala',
+                price: '45 000 FCFA / mois',
+                tag: 'Micro-Job Freelance',
+                tagColor: 'bg-blue-100 text-blue-700',
+                date: 'Aujourd\'hui',
+                desc: 'Boutique de vêtements à Akwa cherche un jeune dynamique pour répondre aux clients WhatsApp, publier des catalogues et suivre les livraisons à Douala.',
+                contact: '237690000001'
+            },
+            {
+                id: 2,
+                type: 'guide',
+                title: 'Guide Pratique: Lancer son Élevage de Poulets de Chair à Bafoussam',
+                city: 'Bafoussam',
+                price: '2 000 FCFA',
+                tag: 'E-book PDF',
+                tagColor: 'bg-emerald-100 text-cmGreen',
+                date: 'Il y a 2 jours',
+                desc: 'Guide complet étape par étape: construction du poulailler local, prophylaxie vétérinaire, alimentation économique et circuits de vente directe à Bafoussam et l\'Ouest.',
+                contact: '237670000002'
+            },
+            {
+                id: 3,
+                type: 'training',
+                title: 'Atelier Intensif: Créer et Vendre avec Canva & Facebook Ads',
+                city: 'Yaoundé',
+                price: '10 000 FCFA',
+                tag: 'Formation Présentielle',
+                tagColor: 'bg-amber-100 text-amber-800',
+                date: 'Ce Samedi',
+                desc: 'Formation pratique à Bastos (Yaoundé). Apprenez à concevoir des visuels vendeurs sur mobile et lancer des campagnes sponsorisées ciblées au Cameroun.',
+                contact: '237690000003'
+            },
+            {
+                id: 4,
+                type: 'job',
+                title: 'Livreur Indépendant avec Moto',
+                city: 'Yaoundé',
+                price: '1 500 FCFA / livraison',
+                tag: 'Mission Ponctuelle',
+                tagColor: 'bg-blue-100 text-blue-700',
+                date: 'Hier',
+                desc: 'Plateforme e-commerce recrute des livreurs motivés possédant leur propre moto pour couvrir la zone Mokolo, Ngoa-Ekelle et Nsimeyong.',
+                contact: '237670000004'
+            },
+            {
+                id: 5,
+                type: 'guide',
+                title: 'E-Book: Masterclass E-commerce & Importation Chine-Cameroun',
+                city: 'En ligne',
+                price: '3 500 FCFA',
+                tag: 'E-book & Vidéos',
+                tagColor: 'bg-emerald-100 text-cmGreen',
+                date: 'Il y a 3 jours',
+                desc: 'Comment commander sur 1688/Alibaba, choisir un cargo fiable à Douala (Air/Mer) et vendre sans stock grâce au paiement Mobile Money.',
+                contact: '237690000005'
+            },
+            {
+                id: 6,
+                type: 'training',
+                title: 'Initiation à la Transformation de Cassava en Farine de Haute Qualité',
+                city: 'Garoua',
+                price: 'Gratuit (Projet Subventionné)',
+                tag: 'Atelier Gratuit',
+                tagColor: 'bg-purple-100 text-purple-700',
+                date: 'Semaine prochaine',
+                desc: 'Session de formation pratique de 2 jours destinée aux micro-entrepreneurs agricoles du Nord Cameroun. Attestation délivrée.',
+                contact: '237670000006'
+            }
+        ];
+
+        // Project Simulator Presets
+        const projectPresets = {
+            poulailler: {
+                title: 'Élevage de 100 Poulets (Bafoussam / Yaoundé)',
+                items: [
+                    { name: 'Achat des poussins d\'un jour (100 x 600 FCFA)', price: 60000 },
+                    { name: 'Sacs d\'aliments (Démarrage, Croissance, Finition)', price: 115000 },
+                    { name: 'Produits vétérinaires & Vaccins', price: 15000 },
+                    { name: 'Aménagement du local & Chauffage', price: 20000 }
+                ]
+            },
+            ecommerce: {
+                title: 'Boutique E-commerce / WhatsApp Business',
+                items: [
+                    { name: 'Achat du premier stock de produits', price: 75000 },
+                    { name: 'Budget Publicité Facebook / Sponsorisation', price: 20000 },
+                    { name: 'Packaging & Emballages personnalisés', price: 10000 },
+                    { name: 'Frais de transport/Livraison initiale', price: 10000 }
+                ]
+            },
+            fastfood: {
+                title: 'Micro Fast-Food / Stand de Grillades',
+                items: [
+                    { name: 'Barbecue / Grille inox & Matériel de cuisson', price: 45000 },
+                    { name: 'Première commande ingrédients & Poissons/Viandes', price: 35000 },
+                    { name: 'Emballages à emporter & Charbon', price: 10000 },
+                    { name: 'Petit mobilier & Bâche', price: 25000 }
+                ]
+            },
+            pressin: {
+                title: 'Service de Pressing & Nettoyage à domicile',
+                items: [
+                    { name: 'Acheter Fer à repasser à vapeur pro', price: 30000 },
+                    { name: 'Détergents spécialisés, Dégraissants, Brosses', price: 15000 },
+                    { name: 'Housses de protection & Cintres', price: 10000 },
+                    { name: 'Campagne de prospectus & Visioconférence', price: 10000 }
+                ]
+            }
+        };
+
+        // Application State
+        let items = [...initialItems];
+        let currentTab = 'all';
+        let savedIds = JSON.parse(localStorage.getItem('opportunityCMR_saved') || '[]');
+        let activePayItem = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            updateFavBadge();
+            calculateBudget();
+        });
+
+        // Filter and Render Items
+        function renderCards() {
+            const grid = document.getElementById('contentGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchQuery = (document.getElementById('searchInput').value || '').toLowerCase();
+            const cityQuery = document.getElementById('cityFilter').value;
+
+            const filtered = items.filter(item => {
+                const matchesTab = currentTab === 'all' || item.type === currentTab;
+                const matchesCity = !cityQuery || item.city === cityQuery;
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || 
+                                      item.desc.toLowerCase().includes(searchQuery) ||
+                                      item.city.toLowerCase().includes(searchQuery);
+                return matchesTab && matchesCity && matchesSearch;
+            });
+
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(item => {
+                const isSaved = savedIds.includes(item.id);
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl border border-slate-100 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden group';
+                
+                card.innerHTML = `
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[11px] font-bold px-2.5 py-1 rounded-full ${item.tagColor}">${item.tag}</span>
+                            <button onclick="toggleSave(${item.id})" class="text-slate-300 hover:text-cmRed transition p-1">
+                                <i class="${isSaved ? 'fa-solid text-cmRed' : 'fa-regular'} fa-heart text-base"></i>
+                            </button>
+                        </div>
+                        <h3 class="font-bold text-slate-900 text-base group-hover:text-cmGreen transition line-clamp-2">${item.title}</h3>
+                        <p class="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">${item.desc}</p>
+                    </div>
+
+                    <div class="px-5 py-3 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between">
+                        <div>
+                            <span class="block text-[10px] text-slate-400 font-medium">
+                                <i class="fa-solid fa-location-dot text-cmRed mr-1"></i>${item.city}
+                            </span>
+                            <span class="font-black text-slate-900 text-sm">${item.price}</span>
+                        </div>
+                        
+                        ${item.type === 'guide' ? `
+                            <button onclick="openPayModal('${item.title}', '${item.price}')" class="px-3.5 py-1.5 bg-cmGreen hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold shadow-xs transition flex items-center space-x-1">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Acheter</span>
+                            </button>
+                        ` : `
+                            <a href="https://wa.me/${item.contact}?text=Bonjour,%20je%20suis%20intéressé%20par%20votre%20annonce%20sur%20OpportunityCMR:%20${encodeURIComponent(item.title)}" target="_blank" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition flex items-center space-x-1">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Contacter</span>
+                            </a>
+                        `}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function setActiveTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white', 'shadow-xs');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            });
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('bg-slate-900', 'text-white', 'shadow-xs');
+            }
+            renderCards();
+        }
+
+        function filterContent() {
+            renderCards();
+        }
+
+        function syncMobileSearch() {
+            const val = document.getElementById('mobileSearchInput').value;
+            document.getElementById('searchInput').value = val;
+            renderCards();
+        }
+
+        function toggleMobileSearch() {
+            const box = document.getElementById('mobileSearchBox');
+            box.classList.toggle('hidden');
+        }
+
+        function filterByCity(cityName) {
+            document.getElementById('cityFilter').value = cityName;
+            renderCards();
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            document.getElementById('cityFilter').value = '';
+            setActiveTab('all');
+        }
+
+        function calculateBudget() {
+            const key = document.getElementById('projectPreset').value;
+            const data = projectPresets[key];
+            const breakdownContainer = document.getElementById('simBreakdown');
+            const titleElem = document.getElementById('simTitle').firstElementChild;
+            const totalElem = document.getElementById('simTotal');
+
+            titleElem.textContent = data.title;
+            breakdownContainer.innerHTML = '';
+
+            let total = 0;
+            data.items.forEach(item => {
+                total += item.price;
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center text-slate-600';
+                row.innerHTML = `
+                    <span><i class="fa-solid fa-check text-cmGreen mr-2"></i>${item.name}</span>
+                    <span class="font-semibold text-slate-800">${item.price.toLocaleString()} FCFA</span>
+                `;
+                breakdownContainer.appendChild(row);
+            });
+
+            totalElem.textContent = `${total.toLocaleString()} FCFA`;
+        }
+
+        function toggleSave(id) {
+            if (savedIds.includes(id)) {
+                savedIds = savedIds.filter(i => i !== id);
+                showToast('Retiré de vos favoris');
+            } else {
+                savedIds.push(id);
+                showToast('Ajouté à vos favoris !');
+            }
+            localStorage.setItem('opportunityCMR_saved', JSON.stringify(savedIds));
+            updateFavBadge();
+            renderCards();
+        }
+
+        function updateFavBadge() {
+            const badge = document.getElementById('favCountBadge');
+            if (savedIds.length > 0) {
+                badge.textContent = savedIds.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function openSavedModal() {
+            const list = document.getElementById('savedList');
+            const savedItems = items.filter(i => savedIds.includes(i.id));
+
+            if (savedItems.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">Aucun élément sauvegardé pour le moment.</p>`;
+            } else {
+                list.innerHTML = savedItems.map(item => `
+                    <div class="p-3 bg-slate-50 border rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-slate-800 block">${item.title}</span>
+                            <span class="text-slate-500">${item.city} • ${item.price}</span>
+                        </div>
+                        <button onclick="toggleSave(${item.id}); openSavedModal();" class="text-slate-400 hover:text-cmRed">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+            toggleModal('modalSaved');
+        }
+
+        function openPayModal(title, price) {
+            document.getElementById('payTitle').textContent = title;
+            document.getElementById('payPrice').textContent = price;
+            document.getElementById('momoStatus').className = 'hidden';
+            toggleModal('modalPay');
+        }
+
+        function processPayment(e) {
+            e.preventDefault();
+            const btn = document.getElementById('paySubmitBtn');
+            const status = document.getElementById('momoStatus');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Traitement USSD en cours...`;
+
+            setTimeout(() => {
+                status.className = 'text-center py-2 px-3 text-xs font-semibold rounded-lg bg-amber-100 text-amber-800 block';
+                status.textContent = 'Notification envoyée sur votre téléphone. Tapez votre code PIN pour valider.';
+            }, 1500);
+
+            setTimeout(() => {
+                status.className = 'text-center py-2 px-3 text-xs font-semibold rounded-lg bg-emerald-100 text-emerald-800 block';
+                status.textContent = 'Paiement confirmé avec succès ! Téléchargement de votre guide...';
+                btn.disabled = false;
+                btn.textContent = 'Valider le Paiement';
+
+                setTimeout(() => {
+                    toggleModal('modalPay');
+                    showToast('Guide téléchargé dans votre appareil !');
+                }, 2000);
+            }, 4000);
+        }
+
+        function handlePublish(e) {
+            e.preventDefault();
+            const type = document.getElementById('pubType').value;
+            const title = document.getElementById('pubTitle').value;
+            const city = document.getElementById('pubCity').value;
+            const price = document.getElementById('pubPrice').value;
+            const desc = document.getElementById('pubDesc').value;
+            const contact = document.getElementById('pubContact').value;
+
+            let tag = 'Annonce';
+            let tagColor = 'bg-slate-100 text-slate-800';
+
+            if (type === 'job') { tag = 'Micro-Job'; tagColor = 'bg-blue-100 text-blue-700'; }
+            if (type === 'guide') { tag = 'Guide / E-book'; tagColor = 'bg-emerald-100 text-cmGreen'; }
+            if (type === 'training') { tag = 'Formation'; tagColor = 'bg-amber-100 text-amber-800'; }
+
+            const newItem = {
+                id: Date.now(),
+                type,
+                title,
+                city,
+                price,
+                tag,
+                tagColor,
+                date: 'A l\'instant',
+                desc,
+                contact
+            };
+
+            items.unshift(newItem);
+            renderCards();
+            toggleModal('modalPublish');
+            showToast('Votre opportunité a été publiée !');
+            e.target.reset();
+        }
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toastMsg');
+            msg.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
